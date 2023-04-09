@@ -1,9 +1,9 @@
 A collection of functions for operating upon Entries.<br>
-📦 [Node.js](https://www.npmjs.com/package/extra-entries),
-🌐 [Web](https://www.npmjs.com/package/extra-entries.web),
-📜 [Files](https://unpkg.com/extra-entries/),
-📰 [Docs](https://nodef.github.io/extra-entries/),
-📘 [Wiki](https://github.com/nodef/extra-entries/wiki/).
+📦 [Node.js](https://www.npmjs.com/package/extra-ientries),
+🌐 [Web](https://www.npmjs.com/package/extra-ientries.web),
+📜 [Files](https://unpkg.com/extra-ientries/),
+📰 [Docs](https://nodef.github.io/extra-ientries/),
+📘 [Wiki](https://github.com/nodef/extra-ientries/wiki/).
 
 [Entries] is a list of key-value pairs, with unique keys. This package
 includes common functions related to querying **about** entries, **generating**
@@ -23,16 +23,16 @@ is exposed as `extra_entries` standalone variable and can be loaded from
 
 > Stability: [Experimental](https://www.youtube.com/watch?v=L1j93RnIxEo).
 
-[Entries]: https://github.com/nodef/extra-entries/wiki/Entries
+[Entries]: https://github.com/nodef/extra-ientries/wiki/Entries
 [iterable]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
-[jsDelivr CDN]: https://cdn.jsdelivr.net/npm/extra-entries.web/index.js
+[jsDelivr CDN]: https://cdn.jsdelivr.net/npm/extra-ientries.web/index.js
 
 <br>
 
 ```javascript
-const entries = require('extra-entries');
-// import * as entries from "extra-entries";
-// import * as entries from "https://unpkg.com/extra-entries/index.mjs"; (deno)
+const entries = require('extra-ientries');
+// import * as entries from "extra-ientries";
+// import * as entries from "https://unpkg.com/extra-ientries/index.mjs"; (deno)
 
 var x = [['a', 1], ['b', 2], ['c', 3], ['d', 4], ['e', 5]];
 [...entries.filter(x, v => v % 2 === 1)];
@@ -154,73 +154,73 @@ var x = [['a', 1], ['b', 2], ['c', 3]];
 [![](https://img.youtube.com/vi/5UABeDXf_iE/maxresdefault.jpg)](https://www.youtube.com/watch?v=5UABeDXf_iE)<br>
 [![ORG](https://img.shields.io/badge/org-nodef-green?logo=Org)](https://nodef.github.io)
 [![DOI](https://zenodo.org/badge/133400406.svg)](https://zenodo.org/badge/latestdoi/133400406)
-[![Coverage Status](https://coveralls.io/repos/github/nodef/extra-entries/badge.svg?branch=master)](https://coveralls.io/github/nodef/extra-entries?branch=master)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/4624983540e6b87358dc/test_coverage)](https://codeclimate.com/github/nodef/extra-entries/test_coverage)
-[![Maintainability](https://api.codeclimate.com/v1/badges/4624983540e6b87358dc/maintainability)](https://codeclimate.com/github/nodef/extra-entries/maintainability)
+[![Coverage Status](https://coveralls.io/repos/github/nodef/extra-ientries/badge.svg?branch=master)](https://coveralls.io/github/nodef/extra-ientries?branch=master)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/4624983540e6b87358dc/test_coverage)](https://codeclimate.com/github/nodef/extra-ientries/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/4624983540e6b87358dc/maintainability)](https://codeclimate.com/github/nodef/extra-ientries/maintainability)
 
 
-[is]: https://github.com/nodef/extra-entries/wiki/is
-[keys]: https://github.com/nodef/extra-entries/wiki/keys
-[values]: https://github.com/nodef/extra-entries/wiki/values
-[fromLists]: https://github.com/nodef/extra-entries/wiki/fromLists
-[compare]: https://github.com/nodef/extra-entries/wiki/compare
-[isEqual]: https://github.com/nodef/extra-entries/wiki/isEqual
-[size]: https://github.com/nodef/extra-entries/wiki/size
-[isEmpty]: https://github.com/nodef/extra-entries/wiki/isEmpty
-[get]: https://github.com/nodef/extra-entries/wiki/get
-[getAll]: https://github.com/nodef/extra-entries/wiki/getAll
-[getPath]: https://github.com/nodef/extra-entries/wiki/getPath
-[hasPath]: https://github.com/nodef/extra-entries/wiki/hasPath
-[set]: https://github.com/nodef/extra-entries/wiki/set
-[swap]: https://github.com/nodef/extra-entries/wiki/swap
-[remove]: https://github.com/nodef/extra-entries/wiki/remove
-[count]: https://github.com/nodef/extra-entries/wiki/count
-[countAs]: https://github.com/nodef/extra-entries/wiki/countAs
-[min]: https://github.com/nodef/extra-entries/wiki/min
-[minEntry]: https://github.com/nodef/extra-entries/wiki/minEntry
-[max]: https://github.com/nodef/extra-entries/wiki/max
-[maxEntry]: https://github.com/nodef/extra-entries/wiki/maxEntry
-[range]: https://github.com/nodef/extra-entries/wiki/range
-[rangeEntries]: https://github.com/nodef/extra-entries/wiki/rangeEntries
-[head]: https://github.com/nodef/extra-entries/wiki/head
-[tail]: https://github.com/nodef/extra-entries/wiki/tail
-[take]: https://github.com/nodef/extra-entries/wiki/take
-[drop]: https://github.com/nodef/extra-entries/wiki/drop
-[subsets]: https://github.com/nodef/extra-entries/wiki/subsets
-[randomKey]: https://github.com/nodef/extra-entries/wiki/randomKey
-[randomEntry]: https://github.com/nodef/extra-entries/wiki/randomEntry
-[randomSubset]: https://github.com/nodef/extra-entries/wiki/randomSubset
-[has]: https://github.com/nodef/extra-entries/wiki/has
-[hasValue]: https://github.com/nodef/extra-entries/wiki/hasValue
-[hasEntry]: https://github.com/nodef/extra-entries/wiki/hasEntry
-[hasSubset]: https://github.com/nodef/extra-entries/wiki/hasSubset
-[find]: https://github.com/nodef/extra-entries/wiki/find
-[findAll]: https://github.com/nodef/extra-entries/wiki/findAll
-[search]: https://github.com/nodef/extra-entries/wiki/search
-[searchAll]: https://github.com/nodef/extra-entries/wiki/searchAll
-[searchValue]: https://github.com/nodef/extra-entries/wiki/searchValue
-[searchValueAll]: https://github.com/nodef/extra-entries/wiki/searchValueAll
-[forEach]: https://github.com/nodef/extra-entries/wiki/forEach
-[some]: https://github.com/nodef/extra-entries/wiki/some
-[every]: https://github.com/nodef/extra-entries/wiki/every
-[map]: https://github.com/nodef/extra-entries/wiki/map
-[reduce]: https://github.com/nodef/extra-entries/wiki/reduce
-[filter]: https://github.com/nodef/extra-entries/wiki/filter
-[filterAt]: https://github.com/nodef/extra-entries/wiki/filterAt
-[reject]: https://github.com/nodef/extra-entries/wiki/reject
-[rejectAt]: https://github.com/nodef/extra-entries/wiki/rejectAt
-[flat]: https://github.com/nodef/extra-entries/wiki/flat
-[flatMap]: https://github.com/nodef/extra-entries/wiki/flatMap
-[zip]: https://github.com/nodef/extra-entries/wiki/zip
-[partition]: https://github.com/nodef/extra-entries/wiki/partition
-[partitionAs]: https://github.com/nodef/extra-entries/wiki/partitionAs
-[chunk]: https://github.com/nodef/extra-entries/wiki/chunk
-[concat]: https://github.com/nodef/extra-entries/wiki/concat
-[join]: https://github.com/nodef/extra-entries/wiki/join
-[isDisjoint]: https://github.com/nodef/extra-entries/wiki/isDisjoint
-[unionKeys]: https://github.com/nodef/extra-entries/wiki/unionKeys
-[union]: https://github.com/nodef/extra-entries/wiki/union
-[intersection]: https://github.com/nodef/extra-entries/wiki/intersection
-[difference]: https://github.com/nodef/extra-entries/wiki/difference
-[symmetricDifference]: https://github.com/nodef/extra-entries/wiki/symmetricDifference
-[randomValue]: https://github.com/nodef/extra-entries/wiki/randomValue
+[is]: https://github.com/nodef/extra-ientries/wiki/is
+[keys]: https://github.com/nodef/extra-ientries/wiki/keys
+[values]: https://github.com/nodef/extra-ientries/wiki/values
+[fromLists]: https://github.com/nodef/extra-ientries/wiki/fromLists
+[compare]: https://github.com/nodef/extra-ientries/wiki/compare
+[isEqual]: https://github.com/nodef/extra-ientries/wiki/isEqual
+[size]: https://github.com/nodef/extra-ientries/wiki/size
+[isEmpty]: https://github.com/nodef/extra-ientries/wiki/isEmpty
+[get]: https://github.com/nodef/extra-ientries/wiki/get
+[getAll]: https://github.com/nodef/extra-ientries/wiki/getAll
+[getPath]: https://github.com/nodef/extra-ientries/wiki/getPath
+[hasPath]: https://github.com/nodef/extra-ientries/wiki/hasPath
+[set]: https://github.com/nodef/extra-ientries/wiki/set
+[swap]: https://github.com/nodef/extra-ientries/wiki/swap
+[remove]: https://github.com/nodef/extra-ientries/wiki/remove
+[count]: https://github.com/nodef/extra-ientries/wiki/count
+[countAs]: https://github.com/nodef/extra-ientries/wiki/countAs
+[min]: https://github.com/nodef/extra-ientries/wiki/min
+[minEntry]: https://github.com/nodef/extra-ientries/wiki/minEntry
+[max]: https://github.com/nodef/extra-ientries/wiki/max
+[maxEntry]: https://github.com/nodef/extra-ientries/wiki/maxEntry
+[range]: https://github.com/nodef/extra-ientries/wiki/range
+[rangeEntries]: https://github.com/nodef/extra-ientries/wiki/rangeEntries
+[head]: https://github.com/nodef/extra-ientries/wiki/head
+[tail]: https://github.com/nodef/extra-ientries/wiki/tail
+[take]: https://github.com/nodef/extra-ientries/wiki/take
+[drop]: https://github.com/nodef/extra-ientries/wiki/drop
+[subsets]: https://github.com/nodef/extra-ientries/wiki/subsets
+[randomKey]: https://github.com/nodef/extra-ientries/wiki/randomKey
+[randomEntry]: https://github.com/nodef/extra-ientries/wiki/randomEntry
+[randomSubset]: https://github.com/nodef/extra-ientries/wiki/randomSubset
+[has]: https://github.com/nodef/extra-ientries/wiki/has
+[hasValue]: https://github.com/nodef/extra-ientries/wiki/hasValue
+[hasEntry]: https://github.com/nodef/extra-ientries/wiki/hasEntry
+[hasSubset]: https://github.com/nodef/extra-ientries/wiki/hasSubset
+[find]: https://github.com/nodef/extra-ientries/wiki/find
+[findAll]: https://github.com/nodef/extra-ientries/wiki/findAll
+[search]: https://github.com/nodef/extra-ientries/wiki/search
+[searchAll]: https://github.com/nodef/extra-ientries/wiki/searchAll
+[searchValue]: https://github.com/nodef/extra-ientries/wiki/searchValue
+[searchValueAll]: https://github.com/nodef/extra-ientries/wiki/searchValueAll
+[forEach]: https://github.com/nodef/extra-ientries/wiki/forEach
+[some]: https://github.com/nodef/extra-ientries/wiki/some
+[every]: https://github.com/nodef/extra-ientries/wiki/every
+[map]: https://github.com/nodef/extra-ientries/wiki/map
+[reduce]: https://github.com/nodef/extra-ientries/wiki/reduce
+[filter]: https://github.com/nodef/extra-ientries/wiki/filter
+[filterAt]: https://github.com/nodef/extra-ientries/wiki/filterAt
+[reject]: https://github.com/nodef/extra-ientries/wiki/reject
+[rejectAt]: https://github.com/nodef/extra-ientries/wiki/rejectAt
+[flat]: https://github.com/nodef/extra-ientries/wiki/flat
+[flatMap]: https://github.com/nodef/extra-ientries/wiki/flatMap
+[zip]: https://github.com/nodef/extra-ientries/wiki/zip
+[partition]: https://github.com/nodef/extra-ientries/wiki/partition
+[partitionAs]: https://github.com/nodef/extra-ientries/wiki/partitionAs
+[chunk]: https://github.com/nodef/extra-ientries/wiki/chunk
+[concat]: https://github.com/nodef/extra-ientries/wiki/concat
+[join]: https://github.com/nodef/extra-ientries/wiki/join
+[isDisjoint]: https://github.com/nodef/extra-ientries/wiki/isDisjoint
+[unionKeys]: https://github.com/nodef/extra-ientries/wiki/unionKeys
+[union]: https://github.com/nodef/extra-ientries/wiki/union
+[intersection]: https://github.com/nodef/extra-ientries/wiki/intersection
+[difference]: https://github.com/nodef/extra-ientries/wiki/difference
+[symmetricDifference]: https://github.com/nodef/extra-ientries/wiki/symmetricDifference
+[randomValue]: https://github.com/nodef/extra-ientries/wiki/randomValue

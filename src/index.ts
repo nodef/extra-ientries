@@ -1,31 +1,10 @@
+import * as xiterable from "extra-iterable";
+import * as xarray    from "extra-array";
+import * as xmap      from "extra-map";
 import {
   IDENTITY,
   COMPARE,
 } from "extra-function";
-import {
-  is as iterableIs,
-} from "extra-iterable";
-import {
-  randomValue as arrayRandomValue,
-} from "extra-array";
-import {
-  compare as mapCompare,
-  swap$   as mapSwap$,
-  subsets as mapSubsets,
-  randomSubset as mapRandomSubset,
-  hasSubset    as mapHasSubset,
-  flat    as mapFlat,
-  concat  as mapConcat,
-  concat$ as mapConcat$,
-  zip     as mapZip,
-  chunk   as mapChunk,
-  isDisjoint   as mapIsDisjoint,
-  unionKeys    as mapUnionKeys,
-  union        as mapUnion,
-  intersection as mapIntersection,
-  difference   as mapDifference,
-  symmetricDifference as mapSymmetricSifference,
-} from "extra-map";
 
 
 
@@ -53,12 +32,12 @@ export {
 // TYPES
 // =====
 
-/** Entries is a list of key-value pairs, with unique keys. */
-export type Entries<K, V> = Iterable<[K, V]>;
+/** IEntries is an iterable list of key-value pairs, with unique keys. */
+export type IEntries<K, V> = Iterable<[K, V]>;
 
 
-/** Lists is a pair of key list and value list, with unique keys. */
-export type Lists<K, V> = [Iterable<K>, Iterable<V>];
+/** ILists is a pair of key iterable list and value iterable list, with unique keys. */
+export type ILists<K, V> = [Iterable<K>, Iterable<V>];
 
 
 /**
@@ -92,7 +71,7 @@ export type CompareFunction<V> = (a: V, b: V) => number;
  * @param k key of value in entries
  * @param x entries containing the value
  */
-export type ProcessFunction<K, V> = (v: V, k: K, x: Entries<K, V>) => void;
+export type ProcessFunction<K, V> = (v: V, k: K, x: IEntries<K, V>) => void;
 
 
 /**
@@ -102,7 +81,7 @@ export type ProcessFunction<K, V> = (v: V, k: K, x: Entries<K, V>) => void;
  * @param x entries containing the value
  * @returns selected?
  */
-export type TestFunction<K, V> = (v: V, k: K, x: Entries<K, V>) => boolean;
+export type TestFunction<K, V> = (v: V, k: K, x: IEntries<K, V>) => boolean;
 
 
 /**
@@ -112,7 +91,7 @@ export type TestFunction<K, V> = (v: V, k: K, x: Entries<K, V>) => boolean;
  * @param x entries containing the value
  * @returns transformed value
  */
-export type MapFunction<K, V, W> = (v: V, k: K, x: Entries<K, V>) => W;
+export type MapFunction<K, V, W> = (v: V, k: K, x: IEntries<K, V>) => W;
 
 
 /**
@@ -123,7 +102,7 @@ export type MapFunction<K, V, W> = (v: V, k: K, x: Entries<K, V>) => W;
  * @param x entries containing the value
  * @returns reduced value
  */
-export type ReduceFunction<K, V, W> = (acc: W, v: V, k: K, x: Entries<K, V>) => W;
+export type ReduceFunction<K, V, W> = (acc: W, v: V, k: K, x: IEntries<K, V>) => W;
 
 
 /**
@@ -147,7 +126,7 @@ export type EndFunction = (dones: boolean[]) => boolean;
  * @param x entries
  * @returns k₀, k₁, ... | [kᵢ, vᵢ] ∈ x
  */
-export function* keys<K, V>(x: Entries<K, V>): Iterable<K> {
+export function* keys<K, V>(x: IEntries<K, V>): Iterable<K> {
   for (var [k] of x)
     yield k;
 }
@@ -158,7 +137,7 @@ export function* keys<K, V>(x: Entries<K, V>): Iterable<K> {
  * @param x entries
  * @returns v₀, v₁, ... | [kᵢ, vᵢ] ∈ x
  */
-export function* values<K, V>(x: Entries<K, V>): Iterable<V> {
+export function* values<K, V>(x: IEntries<K, V>): Iterable<V> {
   for (var [, v] of x)
     yield v;
 }
@@ -174,7 +153,7 @@ export function* values<K, V>(x: Entries<K, V>): Iterable<V> {
  * @param x lists, i.e. [keys, values]
  * @returns x as entries
  */
-export function* fromLists<K, V>(x: Lists<K, V>): Entries<K, V> {
+export function* fromLists<K, V>(x: ILists<K, V>): IEntries<K, V> {
   var [ks, vs] = x;
   var iv = vs[Symbol.iterator]();
   for (var k of ks)
@@ -195,8 +174,8 @@ export function* fromLists<K, V>(x: Lists<K, V>): Entries<K, V> {
  * @param fm map function (v, k, x)
  * @returns x=y: 0, otherwise: -ve/+ve
  */
-export function compare<K, V, W=V>(x: Entries<K, V>, y: Entries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): number {
-  return mapCompare(new Map(x), new Map(y), fc, fm);
+export function compare<K, V, W=V>(x: IEntries<K, V>, y: IEntries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): number {
+  return xmap.compare(new Map(x), new Map(y), fc, fm);
 }
 
 
@@ -208,7 +187,7 @@ export function compare<K, V, W=V>(x: Entries<K, V>, y: Entries<K, V>, fc: Compa
  * @param fm map function (v, k, x)
  * @returns x = y?
  */
-export function isEqual<K, V, W=V>(x: Entries<K, V>, y: Entries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): boolean {
+export function isEqual<K, V, W=V>(x: IEntries<K, V>, y: IEntries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): boolean {
   return compare(x, y, fc, fm)===0;
 }
 
@@ -224,7 +203,7 @@ export function isEqual<K, V, W=V>(x: Entries<K, V>, y: Entries<K, V>, fc: Compa
  * @param k key
  * @returns x[k]
  */
-export function get<K, V>(x: Entries<K, V>, k: K): V {
+export function get<K, V>(x: IEntries<K, V>, k: K): V {
   for (var [j, u] of x)
     if (j===k) return u;
 }
@@ -236,7 +215,7 @@ export function get<K, V>(x: Entries<K, V>, k: K): V {
  * @param ks keys
  * @returns x[k₀], x[k₁], ... | [k₀, k₁, ...] = ks
  */
-export function getAll<K, V>(x: Entries<K, V>, ks: K[]): Iterable<V> {
+export function getAll<K, V>(x: IEntries<K, V>, ks: K[]): Iterable<V> {
   var m = new Map();
   for (var [k, v] of x)
     if (ks.includes(k)) m.set(k, v);
@@ -253,9 +232,9 @@ export function getAll<K, V>(x: Entries<K, V>, ks: K[]): Iterable<V> {
  * @param p path
  * @returns x[k₀][k₁][...] | [k₀, k₁, ...] = p
  */
-export function getPath<K>(x: Entries<K, any>, p: K[]): any {
+export function getPath<K>(x: IEntries<K, any>, p: K[]): any {
   for (var k of p)
-    x = iterableIs(x)? get(x, k) : undefined;
+    x = xiterable.is(x)? get(x, k) : undefined;
   return x;
 }
 
@@ -266,7 +245,7 @@ export function getPath<K>(x: Entries<K, any>, p: K[]): any {
  * @param p search path
  * @returns x[k₀][k₁][...] exists? | [k₀, k₁, ...] = p
  */
-export function hasPath<K>(x: Entries<K, any>, p: K[]): boolean {
+export function hasPath<K>(x: IEntries<K, any>, p: K[]): boolean {
   return getPath(x, p)!==undefined;
 }
 
@@ -278,7 +257,7 @@ export function hasPath<K>(x: Entries<K, any>, p: K[]): boolean {
  * @param v value
  * @returns x' | x' = x; x'[k] = v
  */
-export function* set<K, V>(x: Entries<K, V>, k: K, v: V): Entries<K, V> {
+export function* set<K, V>(x: IEntries<K, V>, k: K, v: V): IEntries<K, V> {
   for (var [j, u] of x)
     yield j===k? [j, v] : [j, u];
 }
@@ -291,8 +270,8 @@ export function* set<K, V>(x: Entries<K, V>, k: K, v: V): Entries<K, V> {
  * @param l another key
  * @returns x' | x' = x; x'[k] = x[l]; x'[l] = x[k]
  */
-export function swap<K, V>(x: Entries<K, V>, k: K, l: K): Entries<K, V> {
-  return mapSwap$(new Map(x), k, l);
+export function swap<K, V>(x: IEntries<K, V>, k: K, l: K): IEntries<K, V> {
+  return xmap.swap$(new Map(x), k, l);
 }
 
 
@@ -302,7 +281,7 @@ export function swap<K, V>(x: Entries<K, V>, k: K, l: K): Entries<K, V> {
  * @param k key
  * @returns x \\: [k]
  */
-export function* remove<K, V>(x: Entries<K, V>, k: K): Entries<K, V> {
+export function* remove<K, V>(x: IEntries<K, V>, k: K): IEntries<K, V> {
   for (var [j, u] of x)
     if (j!==k) yield [j, u];
 }
@@ -319,7 +298,7 @@ export function* remove<K, V>(x: Entries<K, V>, k: K): Entries<K, V> {
  * @param ft test function (v, k, x)
  * @returns Σtᵢ | tᵢ = 1 if ft(vᵢ) else 0; [kᵢ, vᵢ] ∈ x
  */
-export function count<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): number {
+export function count<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): number {
   var a = 0;
   for (var [k, v] of x)
     if (ft(v, k, x)) ++a;
@@ -333,7 +312,7 @@ export function count<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): number {
  * @param fm map function (v, k, x)
  * @returns Map \{value ⇒ count\}
  */
-export function countAs<K, V, W=V>(x: Entries<K, V>, fm: MapFunction<K, V, V|W> | null=null): Map<V|W, number> {
+export function countAs<K, V, W=V>(x: IEntries<K, V>, fm: MapFunction<K, V, V|W> | null=null): Map<V|W, number> {
   var fm = fm || IDENTITY;
   var a  = new Map();
   for (var [k, v] of x) {
@@ -352,7 +331,7 @@ export function countAs<K, V, W=V>(x: Entries<K, V>, fm: MapFunction<K, V, V|W> 
  * @param fm map function (v, k, x)
  * @returns v | v ≤ vᵢ; [kᵢ, vᵢ] ∈ x
  */
-export function min<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): V {
+export function min<K, V, W=V>(x: IEntries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): V {
   return rangeEntries(x, fc, fm)[0][1];
 }
 
@@ -364,7 +343,7 @@ export function min<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> | null
  * @param fm map function (v, k, x)
  * @returns [min_key, min_value]
  */
-export function minEntry<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): [K, V] {
+export function minEntry<K, V, W=V>(x: IEntries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): [K, V] {
   return rangeEntries(x, fc, fm)[0];
 }
 
@@ -376,7 +355,7 @@ export function minEntry<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> |
  * @param fm map function (v, k, x)
  * @returns v | v ≥ vᵢ; [kᵢ, vᵢ] ∈ x
  */
-export function max<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): V {
+export function max<K, V, W=V>(x: IEntries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): V {
   return rangeEntries(x, fc, fm)[1][1];
 }
 
@@ -388,7 +367,7 @@ export function max<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> | null
  * @param fm map function (v, k, x)
  * @returns [max_key, max_value]
  */
-export function maxEntry<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): [K, V] {
+export function maxEntry<K, V, W=V>(x: IEntries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): [K, V] {
   return rangeEntries(x, fc, fm)[1];
 }
 
@@ -400,7 +379,7 @@ export function maxEntry<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> |
  * @param fm map function (v, k, x)
  * @returns [min_value, max_value]
  */
-export function range<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): [V, V] {
+export function range<K, V, W=V>(x: IEntries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): [V, V] {
   var [a, b] = rangeEntries(x, fc, fm);
   return [a[1], b[1]];
 }
@@ -413,7 +392,7 @@ export function range<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> | nu
  * @param fm map function (v, k, x)
  * @returns [min_entry, max_entry]
  */
-export function rangeEntries<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): [[K, V], [K, V]] {
+export function rangeEntries<K, V, W=V>(x: IEntries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): [[K, V], [K, V]] {
   var fc = fc || COMPARE;
   var fm = fm || IDENTITY;
   var mk: K, mu: V, mv: V|W;
@@ -440,8 +419,8 @@ export function rangeEntries<K, V, W=V>(x: Entries<K, V>, fc: CompareFunction<V|
  * @param n number of entries in each subset [-1 ⇒ any]
  * @returns entries selected by bit from 0..2^|x| if n<0; only of length n otherwise
  */
-export function* subsets<K, V>(x: Entries<K, V>, n: number=-1): Iterable<Entries<K, V>> {
-  yield* mapSubsets(new Map(x), n);
+export function* subsets<K, V>(x: IEntries<K, V>, n: number=-1): Iterable<IEntries<K, V>> {
+  yield* xmap.subsets(new Map(x), n);
 }
 
 
@@ -451,8 +430,8 @@ export function* subsets<K, V>(x: Entries<K, V>, n: number=-1): Iterable<Entries
  * @param fr random number generator ([0, 1))
  * @returns kᵢ | [kᵢ, vᵢ] ∈ x
  */
-export function randomKey<K, V>(x: Entries<K, V>, fr: ReadFunction<number>=Math.random): K {
-  return arrayRandomValue([...keys(x)], fr);
+export function randomKey<K, V>(x: IEntries<K, V>, fr: ReadFunction<number>=Math.random): K {
+  return xarray.randomValue([...keys(x)], fr);
 }
 export {randomKey as key};
 
@@ -463,8 +442,8 @@ export {randomKey as key};
  * @param fr random number generator ([0, 1))
  * @returns vᵢ | [kᵢ, vᵢ] ∈ x
  */
-export function randomValue<K, V>(x: Entries<K, V>, fr: ReadFunction<number>=Math.random): V {
-  return arrayRandomValue([...values(x)], fr);
+export function randomValue<K, V>(x: IEntries<K, V>, fr: ReadFunction<number>=Math.random): V {
+  return xarray.randomValue([...values(x)], fr);
 }
 export {randomValue as value};
 
@@ -475,8 +454,8 @@ export {randomValue as value};
  * @param fr random number generator ([0, 1))
  * @returns [kᵢ, vᵢ] | [kᵢ, vᵢ] ∈ x
  */
-export function randomEntry<K, V>(x: Entries<K, V>, fr: ReadFunction<number>=Math.random): [K, V] {
-  return arrayRandomValue([...x], fr);
+export function randomEntry<K, V>(x: IEntries<K, V>, fr: ReadFunction<number>=Math.random): [K, V] {
+  return xarray.randomValue([...x], fr);
 }
 export {randomEntry as entry};
 
@@ -488,8 +467,8 @@ export {randomEntry as entry};
  * @param fr random number generator ([0, 1))
  * @returns \{[kᵢ, vᵢ], [kⱼ, vⱼ], ...\} | [kᵢ, vᵢ], [kⱼ, vⱼ], ... ∈ x; |\{[kᵢ, vᵢ], [kⱼ, vⱼ], ...\}| = |x| if n<0 else n
  */
-export function randomSubset<K, V>(x: Entries<K, V>, n: number=-1, fr: ReadFunction<number>=Math.random): Entries<K, V> {
-  return mapRandomSubset(new Map(x), n, fr);
+export function randomSubset<K, V>(x: IEntries<K, V>, n: number=-1, fr: ReadFunction<number>=Math.random): IEntries<K, V> {
+  return xmap.randomSubset(new Map(x), n, fr);
 }
 export {randomSubset as subset};
 
@@ -505,7 +484,7 @@ export {randomSubset as subset};
  * @param k search key
  * @returns [k, *] ∈ x?
  */
-export function has<K, V>(x: Entries<K, V>, k: K): boolean {
+export function has<K, V>(x: IEntries<K, V>, k: K): boolean {
   for (var [j] of x)
     if (j===k) return true;
   return false;
@@ -520,7 +499,7 @@ export function has<K, V>(x: Entries<K, V>, k: K): boolean {
  * @param fm map function (v, k, x)
  * @returns [*, v] ∈ x?
  */
-export function hasValue<K, V, W=V>(x: Entries<K, V>, v: V, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): boolean {
+export function hasValue<K, V, W=V>(x: IEntries<K, V>, v: V, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): boolean {
   return searchValue(x, v, fc, fm)!==undefined;
 }
 
@@ -533,7 +512,7 @@ export function hasValue<K, V, W=V>(x: Entries<K, V>, v: V, fc: CompareFunction<
  * @param fm map function (v, k, x)
  * @returns [k, v] ∈ x? | [k, v] = e
  */
-export function hasEntry<K, V, W=V>(x: Entries<K, V>, e: [K, V], fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): boolean {
+export function hasEntry<K, V, W=V>(x: IEntries<K, V>, e: [K, V], fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): boolean {
   var fc = fc || COMPARE;
   var fm = fm || IDENTITY;
   var [k, v] = e, u = get(x, k);
@@ -551,8 +530,8 @@ export function hasEntry<K, V, W=V>(x: Entries<K, V>, e: [K, V], fc: CompareFunc
  * @param fm map function (v, k, x)
  * @returns y ⊆ x?
  */
-export function hasSubset<K, V, W=V>(x: Entries<K, V>, y: Entries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): boolean {
-  return mapHasSubset(new Map(x), new Map(y), fc, fm);
+export function hasSubset<K, V, W=V>(x: IEntries<K, V>, y: IEntries<K, V>, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): boolean {
+  return xmap.hasSubset(new Map(x), new Map(y), fc, fm);
 }
 
 
@@ -562,7 +541,7 @@ export function hasSubset<K, V, W=V>(x: Entries<K, V>, y: Entries<K, V>, fc: Com
  * @param ft test function (v, k, x)
  * @returns first v | ft(v) = true; [k, v] ∈ x
  */
-export function find<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): V {
+export function find<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): V {
   for (var [k, v] of x)
     if (ft(v, k, x)) return v;
 }
@@ -575,7 +554,7 @@ export function find<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): V {
  * @param ft test function (v, k, x)
  * @returns v₀, v₁, ... | ft(vᵢ) = true; [kᵢ, vᵢ] ∈ x
  */
-export function* findAll<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): Iterable<V> {
+export function* findAll<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): Iterable<V> {
   for (var [k, v] of x)
     if (ft(v, k, x)) yield v;
 }
@@ -587,7 +566,7 @@ export function* findAll<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): Iterab
  * @param ft test function (v, k, x)
  * @returns key of entry
  */
-export function search<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): K {
+export function search<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): K {
   for (var [k, v] of x)
     if (ft(v, k, x)) return k;
 }
@@ -599,7 +578,7 @@ export function search<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): K {
  * @param ft test function (v, k, x)
  * @returns keys of entries
  */
-export function* searchAll<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): Iterable<K> {
+export function* searchAll<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): Iterable<K> {
   for (var [k, v] of x)
     if (ft(v, k, x)) yield k;
 }
@@ -613,7 +592,7 @@ export function* searchAll<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): Iter
  * @param fm map function (v, k, x)
  * @returns key of value
  */
-export function searchValue<K, V, W=V>(x: Entries<K, V>, v: V, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): K {
+export function searchValue<K, V, W=V>(x: IEntries<K, V>, v: V, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): K {
   var fc = fc || COMPARE;
   var fm = fm || IDENTITY;
   var w = fm(v, null, null);
@@ -632,7 +611,7 @@ export function searchValue<K, V, W=V>(x: Entries<K, V>, v: V, fc: CompareFuncti
  * @param fm map function (v, k, x)
  * @returns keys of value
  */
-export function* searchValueAll<K, V, W=V>(x: Entries<K, V>, v: V, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): Iterable<K> {
+export function* searchValueAll<K, V, W=V>(x: IEntries<K, V>, v: V, fc: CompareFunction<V|W> | null=null, fm: MapFunction<K, V, V|W> | null=null): Iterable<K> {
   var fc = fc || COMPARE;
   var fm = fm || IDENTITY;
   var w  = fm(v, null, null);
@@ -653,7 +632,7 @@ export function* searchValueAll<K, V, W=V>(x: Entries<K, V>, v: V, fc: CompareFu
  * @param x entries
  * @param fp process function (v, k, x)
  */
-export function forEach<K, V>(x: Entries<K, V>, fp: ProcessFunction<K, V>): void {
+export function forEach<K, V>(x: IEntries<K, V>, fp: ProcessFunction<K, V>): void {
   for (var [k, v] of x)
     fp(v, k, x);
 }
@@ -665,7 +644,7 @@ export function forEach<K, V>(x: Entries<K, V>, fp: ProcessFunction<K, V>): void
  * @param ft test function (v, k, x)
  * @returns true if ft(vᵢ) = true for some [kᵢ, vᵢ] ∈ x
  */
-export function some<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): boolean {
+export function some<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): boolean {
   for (var [k, v] of x)
     if (ft(v, k, x)) return true;
   return false;
@@ -678,7 +657,7 @@ export function some<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): boolean {
  * @param ft test function (v, k, x)
  * @returns true if ft(vᵢ) = true for every [kᵢ, vᵢ] ∈ x
  */
-export function every<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): boolean {
+export function every<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): boolean {
   for (var [k, v] of x)
     if (!ft(v, k, x)) return false;
   return true;
@@ -691,7 +670,7 @@ export function every<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): boolean {
  * @param fm map function (v, k, x)
  * @returns [k₀, fm(v₀)], [k₁, fm(v₁)], ... | [kᵢ, vᵢ] ∈ x
  */
-export function* map<K, V, W=V>(x: Entries<K, V>, fm: MapFunction<K, V, V|W>): Entries<K, V|W> {
+export function* map<K, V, W=V>(x: IEntries<K, V>, fm: MapFunction<K, V, V|W>): IEntries<K, V|W> {
   for (var [k, v] of x)
     yield [k, fm(v, k, x)];
 }
@@ -704,7 +683,7 @@ export function* map<K, V, W=V>(x: Entries<K, V>, fm: MapFunction<K, V, V|W>): E
  * @param acc initial value
  * @returns fr(fr(acc, v₀), v₁)... | fr(acc, v₀) = v₀ if acc not given
  */
-export function reduce<K, V, W=V>(x: Entries<K, V>, fr: ReduceFunction<K, V, V|W>, acc?: V|W): V|W {
+export function reduce<K, V, W=V>(x: IEntries<K, V>, fr: ReduceFunction<K, V, V|W>, acc?: V|W): V|W {
   var init = arguments.length <= 2;
   for (var [k, v] of x) {
     if (init) { init = false; acc = v; }
@@ -720,7 +699,7 @@ export function reduce<K, V, W=V>(x: Entries<K, V>, fr: ReduceFunction<K, V, V|W
  * @param ft test function (v, k, x)
  * @returns [k₀, v₀], [k₁, v₁], ... | ft(vᵢ) = true; [kᵢ, vᵢ] ∈ x
  */
-export function* filter<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): Entries<K, V> {
+export function* filter<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): IEntries<K, V> {
   for (var [k, v] of x)
     if (ft(v, k, x)) yield [k, v];
 }
@@ -732,7 +711,7 @@ export function* filter<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): Entries
  * @param ks keys
  * @returns [k₀, v₀], [k₁, v₁], ... | kᵢ ∈ ks; [kᵢ, vᵢ] ∈ x
  */
-export function* filterAt<K, V>(x: Entries<K, V>, ks: K[]): Entries<K, V> {
+export function* filterAt<K, V>(x: IEntries<K, V>, ks: K[]): IEntries<K, V> {
   for (var [k, v] of x)
     if (ks.includes(k)) yield [k, v];
 }
@@ -744,7 +723,7 @@ export function* filterAt<K, V>(x: Entries<K, V>, ks: K[]): Entries<K, V> {
  * @param ft test function (v, k, x)
  * @returns [k₀, v₀], [k₁, v₁], ... | ft(vᵢ) = false; [kᵢ, vᵢ] ∈ x
  */
-export function* reject<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): Entries<K, V> {
+export function* reject<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): IEntries<K, V> {
   for (var [k, v] of x)
     if (!ft(v, k, x)) yield [k, v];
 }
@@ -756,7 +735,7 @@ export function* reject<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): Entries
  * @param ks keys
  * @returns [k₀, v₀], [k₁, v₁], ... | kᵢ ∉ ks; [kᵢ, vᵢ] ∈ x
  */
-export function* rejectAt<K, V>(x: Entries<K, V>, ks: K[]): Entries<K, V> {
+export function* rejectAt<K, V>(x: IEntries<K, V>, ks: K[]): IEntries<K, V> {
   for (var [k, v] of x)
     if (!ks.includes(k)) yield [k, v];
 }
@@ -770,8 +749,8 @@ export function* rejectAt<K, V>(x: Entries<K, V>, ks: K[]): Entries<K, V> {
  * @param ft test function for flatten (v, k, x) [is]
  * @returns flat entries
  */
-export function flat<K>(x: Entries<K, any>, n: number=-1, fm: MapFunction<K, any, any> | null=null, ft: TestFunction<K, any> | null=null): Entries<K, any> {
-  return mapFlat(x as Map<K, any>, n, fm, ft || iterableIs);
+export function flat<K>(x: IEntries<K, any>, n: number=-1, fm: MapFunction<K, any, any> | null=null, ft: TestFunction<K, any> | null=null): IEntries<K, any> {
+  return xmap.flat(x as Map<K, any>, n, fm, ft || xiterable.is);
 }
 
 
@@ -782,13 +761,13 @@ export function flat<K>(x: Entries<K, any>, n: number=-1, fm: MapFunction<K, any
  * @param ft test function for flatten (v, k, x) [is]
  * @returns flat entries
  */
-export function flatMap<K>(x: Entries<K, any>, fm: MapFunction<K, any, any> | null=null, ft: TestFunction<K, any> | null=null): Entries<K, any> {
+export function flatMap<K>(x: IEntries<K, any>, fm: MapFunction<K, any, any> | null=null, ft: TestFunction<K, any> | null=null): IEntries<K, any> {
   var fm = fm || IDENTITY;
-  var ft = ft || iterableIs;
+  var ft = ft || xiterable.is;
   var a  = new Map();
   for (var [k, v] of x) {
     var v1 = fm(v, k, x);
-    if (ft(v1, k, x)) mapConcat$(a, v1);
+    if (ft(v1, k, x)) xmap.concat$(a, v1);
     else a.set(k, v1);
   }
   return a;
@@ -803,8 +782,8 @@ export function flatMap<K>(x: Entries<K, any>, fm: MapFunction<K, any, any> | nu
  * @param vd default value
  * @returns fm([x₀[k₀], x₁[k₀], ...]), fm([x₀[k₁], x₁[k₁], ...]), ...
  */
-export function zip<K, V, W=V>(xs: Entries<K, V>[], fm: MapFunction<K, V[], V[]|W> | null=null, ft: EndFunction=null, vd?: V): Entries<K, V[]|W> {
-  return mapZip(xs.map(x => new Map(x)), fm, ft, vd);
+export function zip<K, V, W=V>(xs: IEntries<K, V>[], fm: MapFunction<K, V[], V[]|W> | null=null, ft: EndFunction=null, vd?: V): IEntries<K, V[]|W> {
+  return xmap.zip(xs.map(x => new Map(x)), fm, ft, vd);
 }
 
 
@@ -819,7 +798,7 @@ export function zip<K, V, W=V>(xs: Entries<K, V>[], fm: MapFunction<K, V[], V[]|
  * @param ft test function (v, k, x)
  * @returns [satisfies, doesnt]
  */
-export function partition<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): [Entries<K, V>, Entries<K, V>] {
+export function partition<K, V>(x: IEntries<K, V>, ft: TestFunction<K, V>): [IEntries<K, V>, IEntries<K, V>] {
   var t = [], f = [];
   for (var [k, v] of x) {
     if (ft(v, k, x)) t.push([k, v]);
@@ -835,7 +814,7 @@ export function partition<K, V>(x: Entries<K, V>, ft: TestFunction<K, V>): [Entr
  * @param fm map function (v, k, x)
  * @returns Map \{key ⇒ entries\}
  */
-export function partitionAs<K, V, W=V>(x: Entries<K, V>, fm: MapFunction<K, V, V|W>): Map<V|W, Entries<K, V>> {
+export function partitionAs<K, V, W=V>(x: IEntries<K, V>, fm: MapFunction<K, V, V|W>): Map<V|W, IEntries<K, V>> {
   var fm = fm || IDENTITY;
   var a  = new Map();
   for (var [k, v] of x) {
@@ -854,8 +833,8 @@ export function partitionAs<K, V, W=V>(x: Entries<K, V>, fm: MapFunction<K, V, V
  * @param s chunk step [n]
  * @returns [x[0..n], x[s..s+n], x[2s..2s+n], ...]
  */
-export function chunk<K, V>(x: Entries<K, V>, n: number=1, s: number=n): Entries<K, V>[] {
-  return mapChunk(new Map(x), n, s);
+export function chunk<K, V>(x: IEntries<K, V>, n: number=1, s: number=n): IEntries<K, V>[] {
+  return xmap.chunk(new Map(x), n, s);
 }
 
 
@@ -869,8 +848,8 @@ export function chunk<K, V>(x: Entries<K, V>, n: number=1, s: number=n): Entries
  * @param xs all entries
  * @returns x₀ ∪ x₁ ∪ ... | [x₀, x₁, ...] = xs
  */
-export function concat<K, V>(...xs: Entries<K, V>[]): Entries<K, V> {
-  return mapConcat(...xs);
+export function concat<K, V>(...xs: IEntries<K, V>[]): IEntries<K, V> {
+  return xmap.concat(...xs);
 }
 
 
@@ -881,7 +860,7 @@ export function concat<K, V>(...xs: Entries<K, V>[]): Entries<K, V> {
  * @param asc associator [=]
  * @returns "$\{k₀\}=$\{v₀\},$\{k₁\}=$\{v₁\}..." | [kᵢ, vᵢ] ∈ x
  */
-export function join<K, V>(x: Entries<K, V>, sep: string=",", asc: string="="): string {
+export function join<K, V>(x: IEntries<K, V>, sep: string=",", asc: string="="): string {
   var a = "";
   for (var [k, v] of x)
     a += k + asc + v + sep;
@@ -900,8 +879,8 @@ export function join<K, V>(x: Entries<K, V>, sep: string=",", asc: string="="): 
  * @param y another entries
  * @returns x ∩ y = Φ?
  */
-export function isDisjoint<K, V>(x: Entries<K, V>, y: Entries<K, V>): boolean {
-  return mapIsDisjoint(new Map(x), y);
+export function isDisjoint<K, V>(x: IEntries<K, V>, y: IEntries<K, V>): boolean {
+  return xmap.isDisjoint(new Map(x), y);
 }
 
 
@@ -910,8 +889,8 @@ export function isDisjoint<K, V>(x: Entries<K, V>, y: Entries<K, V>): boolean {
  * @param xs all entries
  * @returns \{k₀, k₁, ...\} | [kᵢ, vᵢ] ∈ x₀ ∪ x₁, ...; [x₀, x₁, ...] = xs
  */
-export function unionKeys<K, V>(...xs: Entries<K, V>[]): Set<K> {
-  return mapUnionKeys(...xs);
+export function unionKeys<K, V>(...xs: IEntries<K, V>[]): Set<K> {
+  return xmap.unionKeys(...xs);
 }
 
 
@@ -922,8 +901,8 @@ export function unionKeys<K, V>(...xs: Entries<K, V>[]): Set<K> {
  * @param fc combine function (a, b)
  * @returns x ∪ y = \{[kᵢ, vᵢ] | [kᵢ, vᵢ] ∈ x or [kᵢ, vᵢ] ∈ y\}
  */
-export function union<K, V>(x: Entries<K, V>, y: Entries<K, V>, fc: CombineFunction<V> | null=null): Entries<K, V> {
-  return mapUnion(x, y, fc);
+export function union<K, V>(x: IEntries<K, V>, y: IEntries<K, V>, fc: CombineFunction<V> | null=null): IEntries<K, V> {
+  return xmap.union(x, y, fc);
 }
 
 
@@ -934,8 +913,8 @@ export function union<K, V>(x: Entries<K, V>, y: Entries<K, V>, fc: CombineFunct
  * @param fc combine function (a, b)
  * @returns x ∩ y = \{[kᵢ, vᵢ] | [kᵢ, vᵢ] ∈ x and [kᵢ, vᵢ] ∈ y\}
  */
-export function intersection<K, V>(x: Entries<K, V>, y: Entries<K, V>, fc: CombineFunction<V> | null=null): Entries<K, V> {
-  return mapIntersection(new Map(x), y, fc);
+export function intersection<K, V>(x: IEntries<K, V>, y: IEntries<K, V>, fc: CombineFunction<V> | null=null): IEntries<K, V> {
+  return xmap.intersection(new Map(x), y, fc);
 }
 
 
@@ -945,8 +924,8 @@ export function intersection<K, V>(x: Entries<K, V>, y: Entries<K, V>, fc: Combi
  * @param y another entries
  * @returns x = x - y = \{[kᵢ, vᵢ] | [kᵢ, vᵢ] ∈ x, [kᵢ, *] ∉ y\}
  */
-export function difference<K, V>(x: Entries<K, V>, y: Entries<K, V>): Entries<K, V> {
-  return mapDifference(x, y);
+export function difference<K, V>(x: IEntries<K, V>, y: IEntries<K, V>): IEntries<K, V> {
+  return xmap.difference(x, y);
 }
 
 
@@ -956,6 +935,6 @@ export function difference<K, V>(x: Entries<K, V>, y: Entries<K, V>): Entries<K,
  * @param y another entries
  * @returns x = x-y ∪ y-x
  */
-export function symmetricDifference<K, V>(x: Entries<K, V>, y: Entries<K, V>): Entries<K, V> {
-  return mapSymmetricSifference(x, y);
+export function symmetricDifference<K, V>(x: IEntries<K, V>, y: IEntries<K, V>): IEntries<K, V> {
+  return xmap.symmetricDifference(x, y);
 }
